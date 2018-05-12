@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <title>Cloud Config Server使用方法</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <style>
+        html, body {
+            width: 1000px;
+            margin: auto;
+            padding-bottom: 40px;
+            position: relative;
+        }
+
+        #what-is-it {
+            font-size: 1rem;
+        }
+
+        div.content {
+            margin: 10px 0;
+        }
+
+        div.content .title, span.content .title {
+            display: block;
+            font-size: 1.25em;
+            font-weight: 700;
+            padding-left: 5px;
+            margin-bottom: 10px;
+            border-left: 10px solid green;
+        }
+
+        div.description, span.description {
+            display: block;
+            font-size: 1em;
+            padding: 10px;
+            margin: 0 10px;
+            border: 1px gray solid;
+            border-radius: 5px;
+        }
+
+        div.sub-title span:first-child, span.sub-title span:first-child,
+        div.sub-title div:first-child, div.sub-title div:first-child {
+            display: inline-block;
+            width: 100%;
+            font-size: 1em;
+            padding: 0 1em;
+            font-weight: 700;
+        }
+
+        div.sub-title span.sub-desc, span.sub-title span.sub-desc,
+        div.sub-title div.sub-desc, div.sub-title div.sub-desc {
+            display: inline-block;
+            width: 100%;
+            font-size: 1em;
+            font-weight: normal;
+            padding-left: 2em;
+            text-overflow: clip;
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+
+        div.refer .title {
+            display: inline-block;
+            font-size: 1.25em;
+            font-weight: 700;
+            padding-left: 5px;
+            margin-bottom: 10px;
+            border-left: 10px solid green;
+        }
+
+        div.footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: aliceblue;
+            border-top: 2px aliceblue solid;
+        }
+    </style>
+</head>
+<body>
+<hr/>
+<h1>欢迎使用Cloud Config Server</h1>
+<hr/>
+<p><b>正式开始使用你需要知道以下几点知识</b></p>
+<ol>
+    <li><b>请认真读完所有的内容，不要跳</b></li>
+    <li>什么是Cloud Config Server， <a href="#what-is-it">点击查看</a></li>
+    <li>如何获得Cloud Config Server Docker制品，
+        <a href="#how-to-run">点击查看</a></li>
+    <li>如何运行Cloud Config Server Docker制品，<a href="#how-to-run">点击查看</a></li>
+    <li>如何定制Cloud Config Server服务，<a href="#how-to-run">点击查看</a></li>
+    <li>乱七八糟的汇总的东西，<a href="#how-to-run">点击查看</a></li>
+</ol>
+
+<div id="what-is-it">
+    <div class="content">
+        <div class="title">什么是Cloud Config Server</div>
+        <div class="description">
+            Cloud Config Server(以下简称CCS)是使用SpringCloud实现的分布式配置中心服务，它具有：分布式、移植性强、制品打包多样化、配置文件访问灵活、配置文件实时刷新、授权配置灵活等特点。
+        </div>
+        <div class="sub-title">
+            <span>分布式</span>
+            <span class="sub-desc">CCS是基于SpringCloud的程序实现的，因此它继承SpringCloud程序的分布式的特征</span>
+        </div>
+        <div class="sub-title">
+            <span>移植性强</span>
+            <span class="sub-desc">CCS通过Java编码实现，因此也继承了Java这种变成语言跨平台移植性强的特点，通过Java实现的程序可以在不同的平台上运行。
+				同时也采用了SpringCloud框架实现，在编译打包方面选择了基于maven的方式打包，所以在制品打包方面可以很灵活的配置。
+				CCS可以配置成传统的打包方式：jar或者是war包，也可以综合maven + docker的优秀特性打包成基于docker的容器制品。
+				因此，最终的制品将具有多样化、跨平台以及移植性强点特点。</span>
+        </div>
+        <div class="sub-title">
+            <span>制品打包多样化</span>
+            <span class="sub-desc">CCS编译打包方面选择了基于maven的方式打包，所以在制品打包方面可以很灵活的配置。
+				CCS可以配置成传统的打包方式：jar或者是war包，也可以综合maven + docker插件的方式打包成基于docker的容器制品。
+				</span>
+        </div>
+        <div class="sub-title">
+            <span>配置文件访问灵活</span>
+            <span class="sub-desc">查看官方文档我们会发现任意一个SpringBoot的程序在主程序上加上一个注解<code>@EnableConfigServer</code>,
+				这个程序就能成为一个分布式的配置中心。但是这样的配置太简单了，因此我们给他加了一些拓展，我们给程序加了额外的选择，
+				我们可以使用数据库的方式实现HttpBasic授权，也可以通过自定义的用户名密码实现授权</span>
+        </div>
+        <div class="sub-title">
+            <span>配置文件实时刷新</span>
+            <span class="sub-desc">CCS目前实现的方式是使用本地的配置文件，具体的文件路径定义在<code>search-locations</code>字段中，
+				但是我们不建议修改本字段，因为修改的意义并不是特别的大。因为这并不是我们的关注点，我们的关注点是在配置文件本身，在程序运行中你会发现，
+				你修改任意配置文件，服务器不需要重新启动，你就可以获取到最新的配置文件。</span>
+        </div>
+        <div class="sub-title">
+            <span>授权配置灵活</span>
+            <span class="sub-desc">查看官方文档我们会发现任意一个SpringBoot的程序在主程序上加上一个注解<code>@EnableConfigServer</code>,
+				这个程序就能成为一个分布式的配置中心。但是这样的配置太简单了，因此我们给他加了一些拓展，我们给程序加了额外的选择，
+				我们可以使用数据库的方式实现HttpBasic授权，也可以通过自定义的用户名密码实现授权</span>
+        </div>
+    </div>
+</div>
+
+<div id="how-to-pull">
+    <div class="content">
+        <div class="title">如何获得Docker制品</div>
+        <!--<div class="description">
+            </div>-->
+        <div class="sub-title">
+            <span class="sub-desc">请联系&nbsp;<a href="mailto:yeqinglan@hd123.com">作者</a>&nbsp;获取制品，或当面找作者获得。</span>
+        </div>
+    </div>
+</div>
+
+<div id="how-to-run">
+    <div class="content">
+        <div class="title">如何运行Docker制品</div>
+        <div class="sub-title">
+            <div class="sub-desc">
+                <ol>
+                    <li>请先查看如何&nbsp;<a href="#how-to-pull">获得</a>&nbsp;制品</li>
+                    <li>运行制品，请使用相关&nbsp;<a href="#deploy">脚本</a>&nbsp;实现
+                        <ol><b>注意事项</b>
+                            <li>脚本执行时使用的命令：sh deploy.sh latest</li>
+                            <li>执行命令中涉及的latest是docker制品的标记, $1变量的值对应latest</li>
+                            <li id="deploy">
+                                <div class="content">
+                                    <div class="description">
+										<pre>
+#########################################################################
+# File Name: deploy.sh
+# Author: 叶青蓝
+# mail: yeqinglan@hd123.com
+# Created Time: 2017-06-07 20:00:00
+#########################################################################
+#!/bin/bash
+
+docker rm -f configserver
+docker run -d -p 8888:8888  \
+	-v /var/log/configserver:/var/log/configserver \
+	-v /hdapp/configs:/opt/configs \
+	--name configserver \
+	dockerhub.hd123.com/cloud-config-server:$1</pre>
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="how-to-config">
+    <div class="content">
+        <div class="title">如何定制configserver</div>
+        <div class="sub-title">
+            <div>在系统根目录创建deploy目录</div>
+            <div class="sub-desc">
+                <div class="content">
+                    <div class="description">
+						<pre>
+mkdir -p /deploy</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-title">
+            <div>在deploy目录新建文件：application.yaml.bak</div>
+            <div class="sub-desc">
+                <div class="content">
+                    <div class="description">
+					<pre>
+vi application.yaml.bak
+保存并退出编辑</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-title">
+            <div>拷贝以下配置内容到application.yaml.bak</div>
+            <div class="sub-desc">
+                <div class="content">
+                    <div class="description">
+					<pre>
+server:
+  application: ConfigServer
+  port: 8888
+  session:
+    timeout: 1800
+    cookie:
+      max-age: 1800
+spring:
+  config:
+    name: ${server.application}
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: /opt/configs
+  datasource:
+    name: ${server.application}
+    url: jdbc:mysql://{host}:3306/{database}?characterEncoding=utf8
+    username: {username}
+    password: {password}
+    driver-class-name: com.mysql.jdbc.Driver
+    tomcat:
+      validation-query: SELECT 1 FROM DUAL
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: false
+      max-idle: 8
+      min-idle: 8
+      initial-size: 10
+      max-active: 100
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: mysql
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+app:
+  auth:
+    enable: {enable}
+    users:
+    - username: user
+      password: www.hd123.com
+      roles:
+      - USER
+    - username: admin
+      password: config@hd123.com
+      roles:
+      - USER
+      - ADMIN</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-title">
+            <div>创建并复制以下内容到脚本init-configserver.sh</div>
+            <div class="sub-desc">
+                <div class="content">
+                    <div class="description">
+					<pre>
+#!bin/bash
+
+echo -e "\n"
+echo -e "======================================="
+echo -e "     请选择您要做的操作 "
+echo -e "       1、使用数据库配置授权"
+echo -e "       2、使用内存配置授权"
+echo -e "======================================="
+
+echo -e "\n"
+echo "请输入你的选择（序号）:"
+read choice
+
+echo -e "\n正在拷贝配置文件"
+\cp ./application.yaml.bak ./application.yaml
+
+if [ $choice -eq 1 ]
+then
+   echo -e "你的选择为：使用数据库配置授权"
+   echo -e "\n请输入数据库连接地址（IP）："
+   read ip
+   echo -e "\n请输入数据库名称："
+   read database
+   echo -e "\n请输入数据库连接用户名："
+   read username
+   echo -e "\n请输入数据库连接密码："
+   read password
+
+   echo -e "\n正在生成对应的配置文件"
+   perl -p -i -e "s/{host}/$ip/g"           ./application.yaml
+   perl -p -i -e "s/{database}/$database/g" ./application.yaml
+   perl -p -i -e "s/{username}/$username/g" ./application.yaml
+   perl -p -i -e "s/{password}/$password/g" ./application.yaml
+   perl -p -i -e "s/{enable}/true/g"        ./application.yaml
+
+   echo -e "\n配置文件已生成，正在拷贝到docker容器"
+   status=`docker ps | grep configserver`
+   if [ "$status" = "" ]
+   then
+     docker start configserver && \
+     docker exec -it --tty=false configserver \
+            bash -c 'cat > /opt/config/application.yaml' < ./application.yaml
+   else
+     docker exec -it --tty=false configserver \
+            bash -c 'cat > /opt/config/application.yaml' < ./application.yaml
+   fi
+
+   echo -e "配置文件拷贝完成，正在重启容器"
+   docker restart configserver
+   exit
+fi
+
+if [ $choice -eq 2 ]
+then
+   echo -e "你的选择为：使用内存配置授权"
+   echo -e "\n请输入数据库连接地址（IP）："
+   read ip
+   echo -e "\n请输入数据库名称："
+   read database
+   echo -e "\n请输入数据库连接用户名："
+   read username
+   echo -e "\n请输入数据库连接密码："
+   read password
+
+   echo -e "\n正在生成对应的配置文件"
+   perl -p -i -e "s/{host}/$ip/g"           ./application.yaml
+   perl -p -i -e "s/{database}/$database/g" ./application.yaml
+   perl -p -i -e "s/{username}/$username/g" ./application.yaml
+   perl -p -i -e "s/{password}/$password/g" ./application.yaml
+   perl -p -i -e "s/{enable}/false/g"       ./application.yaml
+
+   echo -e "\n配置文件已生成，正在拷贝到docker容器"
+   status=`docker ps | grep configserver`
+   if [ "$status" = "" ]
+   then
+     docker start configserver && \
+     docker exec -it --tty=false configserver \
+            bash -c 'cat > /opt/config/application.yaml' < ./application.yaml
+   else
+     docker exec -it --tty=false configserver \
+            bash -c 'cat > /opt/config/application.yaml' < ./application.yaml
+   fi
+
+   echo -e "配置文件拷贝完成，正在重启容器"
+   docker restart configserver
+   exit
+fi
+
+echo -e "\n您的选择不正确，byebye ^_^ ...\n"
+exit</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-title">
+            <div>执行脚本init-configserver.sh</div>
+            <div class="sub-desc">
+                <div class="content">
+                    <div class="description">
+						<pre>
+sh init-configserver.sh</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="refer">
+    <div class="title">乱七八糟的汇总</div>
+    <ol>
+        <li>关于系统运行配置文件，以下为具体内容</a>
+            <div class="content">
+                <div class="description">
+					<pre>
+server:
+  application: ConfigServer
+  port: 8888
+  session:
+    timeout: 1800
+    cookie:
+      max-age: 1800
+
+---
+spring:
+  config:
+    name: ${server.application}
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:/opt/configs
+  datasource:
+    name: ${server.application}
+    url: jdbc:mysql://localhost:3306/cloud?characterEncoding=utf8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    continue-on-error: true
+    tomcat:
+      validation-query: SELECT 1 FROM DUAL
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: false
+      max-idle: 8
+      min-idle: 8
+      initial-size: 10
+      max-active: 100
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: mysql
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+---
+logging:
+  level: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%p] [%c:%L] %m%n"
+
+---
+app:
+  auth:
+    enable: false
+    users:
+    - username: user
+      password: www.hd123.com
+      roles:
+      - USER
+    - username: admin
+      password: config@hd123.com
+      roles:
+      - USER
+      - ADMIN</pre>
+                </div>
+            </div>
+        </li>
+        <li>关于SpringCloud，这是&nbsp;<a target="_blank" href="http://dwz.cn/61vEY8">度娘的说法</a></li>
+        <li>关于SpringCloud的文档，你可以&nbsp;<a target="_blank" href="http://t.cn/RSwFXb0">看这里</a></li>
+        <li>关于SpringBoot，这是&nbsp;<a target="_blank" href="http://dwz.cn/61vh38">度娘的说法</a></li>
+        <li>关于SpringBoot的文档，你可以&nbsp;<a target="_blank" href="http://t.cn/RSwe1cB">看这里</a></li>
+        <li>以上内容涉及的所有&nbsp;<a href="bin.zip" download="bin.zip">文件</a>&nbsp;</li>
+    </ol>
+</div>
+
+<div class="footer">
+    不要问我为什么加一个不对齐的脚，自己百度去
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.9.3/umd/popper.min.js"
+        integrity="sha384-knhBOwpf8/28D6ygAjJeb0STNDZqfPbKaWQ8wIz/xgSc0xXwKsKhNype8fmfMka2"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+        crossorigin="anonymous"></script>
+</body>
+</html>

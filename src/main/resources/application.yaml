@@ -1,0 +1,67 @@
+server:
+  application: ConfigServer
+  port: 8888
+  session:
+    timeout: 1800
+    cookie:
+      max-age: 1800
+
+---
+spring:
+  config:
+    name: ${server.application}
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:/opt/configs
+  datasource:
+    name: ${server.application}
+    url: jdbc:mysql://172.17.11.16:3306/cloud?characterEncoding=utf8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    continue-on-error: true
+    tomcat:
+      validation-query: SELECT 1 FROM DUAL
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: false
+      max-idle: 8
+      min-idle: 8
+      initial-size: 10
+      max-active: 100
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: mysql
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+---
+logging:
+  level: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%p] [%c:%L] %m%n"
+
+---
+app:
+  auth:
+    enable: true
+    users:
+    - username: user
+      password: www.hd123.com
+      roles:
+      - USER
+    - username: admin
+      password: config@hd123.com
+      roles:
+      - USER
+      - ADMIN
+      - ACTUATOR

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.creativeworkes.configserver</groupId>
+  <artifactId>cloud-config-server</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>ConfigServer</name>
+  <description>Spring Boot Cloud Config Server</description>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.3.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <!-- 产品组织 -->
+  <organization>
+    <name>creativeworkes</name>
+    <url></url>
+  </organization>
+
+  <!-- 代码库 -->
+  <scm>
+    <connection>scm:git:https://github.com/creativeworkes/cloud-config-server.git</connection>
+    <developerConnection>scm:git:https://github.com/creativeworkes/cloud-config-server.git</developerConnection>
+    <url>https://github.com/creativeworkes/cloud-config-server/tree/master</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <!-- 问题库 -->
+  <issueManagement>
+    <system>JIRA</system>
+  </issueManagement>
+
+  <!-- CI集成 -->
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>http://172.17.12.136:8080/jenkins/view/Cloud/job/cloud-config-server/</url>
+  </ciManagement>
+
+  <!-- 制品管理 -->
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <!-- Maven仓库 -->
+  <repositories>
+    <repository>
+      <id>ossrh</id>
+      <name>Central Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+
+  <!-- 开发成员 -->
+  <developers>
+    <developer>
+      <id>Yeqinglan</id>
+      <name>叶青蓝</name>
+      <email>ygltzx@sina.com</email>
+    </developer>
+  </developers>
+
+  <properties>
+    <!-- Build Compiler Args -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+    <!-- Spring Cloud Support -->
+    <spring-cloud.version>Dalston.RELEASE</spring-cloud.version>
+    <!-- Maven Plugin Version -->
+    <!--<maven-deploy-plugin.version>2.7</maven-deploy-plugin.version>-->
+    <!-- Docker Support -->
+    <springloaded.version>1.2.6.RELEASE</springloaded.version>
+    <docker.plugin.version>1.0.0</docker.plugin.version>
+    <heading.docker.registry>dockerhub.hd123.com</heading.docker.registry>
+    <!-- Spring Boot Start Class -->
+    <start-class>com.creativeworkes.configserver.main.ConfigServerApplication</start-class>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-config-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>mysql-connector-java</artifactId>
+      <groupId>mysql</groupId>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgument>-Xlint:unchecked</compilerArgument>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${project.parent.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>true</executable>
+          <jvmArguments>-ea</jvmArguments>
+          <mainClass>${start-class}</mainClass>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>springloaded</artifactId>
+            <version>${springloaded.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <packagingExcludes>WEB-INF/classes/application.yaml</packagingExcludes>
+          <archive>
+            <manifest>
+              <mainClass>${start-class}</mainClass>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <checkModificationExcludes>
+            <checkModificationExclude>.iml</checkModificationExclude>
+            <checkModificationExclude>.idea</checkModificationExclude>
+            <checkModificationExclude>.project</checkModificationExclude>
+            <checkModificationExclude>.classpath</checkModificationExclude>
+            <checkModificationExclude>.mymetadata</checkModificationExclude>
+            <checkModificationExclude>.apt_generated</checkModificationExclude>
+          </checkModificationExcludes>
+          <tagNameFormat>@{project.version}</tagNameFormat>
+          <providerImplementations>
+            <git>jgit</git>
+          </providerImplementations>
+          <tagBase>${project.artifactId}-${project.version}</tagBase>
+          <username>hddenv</username>
+          <password>!hddenv123</password>
+          <goals>-f pom.xml deploy</goals>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-provider-jgit</artifactId>
+            <version>1.9.5</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${docker.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>build-image</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <configuration>
+              <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+              <imageName>${heading.docker.registry}/${project.build.finalName}</imageName>
+              <imageTags>
+                <imageTag>${project.version}</imageTag>
+                <imageTag>latest</imageTag>
+              </imageTags>
+              <forceTags>true</forceTags>
+              <resources>
+                <resource>
+                  <targetPath>/</targetPath>
+                  <directory>${project.build.directory}</directory>
+                  <include>${project.build.finalName}.war</include>
+                  <include>classes/application.yaml</include>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>push-image</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <serverId>heading-dockerhub</serverId>
+              <imageName>
+                ${heading.docker.registry}/${project.build.finalName}:${project.version}
+              </imageName>
+              <registryUrl>https://${heading.docker.registry}</registryUrl>
+              <retryPushCount>3</retryPushCount>
+              <retryPushTimeout>60</retryPushTimeout>
+            </configuration>
+          </execution>
+          <execution>
+            <id>push-image-latest</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <serverId>heading-dockerhub</serverId>
+              <imageName>
+                ${heading.docker.registry}/${project.build.finalName}:latest
+              </imageName>
+              <registryUrl>https://${heading.docker.registry}</registryUrl>
+              <retryPushCount>3</retryPushCount>
+              <retryPushTimeout>60</retryPushTimeout>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
